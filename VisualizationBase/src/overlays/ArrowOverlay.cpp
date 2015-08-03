@@ -38,41 +38,63 @@ ArrowOverlay::ArrowOverlay(Item* arrowFrom, Item* arrowTo, const StyleType* styl
 
 void ArrowOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-	Drawing::drawArrow(painter, lineFrom_, lineTo_, painter->pen(), painter->pen(),
-					   invertArrow_, !invertArrow_, 1);
+	QPen pen; // Use default pen
+	Drawing::drawArrow(painter, lineFrom_, lineTo_, pen, pen, false, true, 1);
 }
 
 void ArrowOverlay::determineChildren(){}
 
 void ArrowOverlay::updateGeometry(int, int)
 {
-	invertArrow_ = false;
-	//Find the space the line will occupy in the scene
+	// Find the space the line will occupy in the scene
 	auto first = firstAssociatedItem();
 	auto second = secondAssociatedItem();
-	auto leftTopCorner = QPoint(
-				std::min(first->scenePos().x() + first->widthInLocal(), second->scenePos().x() + second->widthInLocal()),
-				std::min(first->scenePos().y() + first->heightInLocal() / 2, second->scenePos().y() + second->heightInLocal() / 2));
-	auto rightBottomCorner = QPoint(
-				std::max(first->scenePos().x(), second->scenePos().x()),
-				std::max(first->scenePos().y() + first->heightInLocal() / 2, second->scenePos().y() + second->heightInLocal() / 2));
 
-	setPos(leftTopCorner.x(), leftTopCorner.y());
-	setSize(rightBottomCorner.x() - leftTopCorner.x(),
-			rightBottomCorner.y() - leftTopCorner.y());
-
-	//Find the actual starting and end points of the line in local coordinates
-	if (first->scenePos().x() > second->scenePos().x())
+	auto firstPos = first->scenePos();
+	auto secondPos = second->scenePos();
+	QPointF leftTop;
+	QPointF rightBottom;
+	if (firstPos.x() < secondPos.x())
 	{
-		auto temp = second;
-		second = first;
-		first = temp;
-		invertArrow_ = true;
+		if (firstPos.y() < secondPos.y())
+		{
+			// first is at top left
+			leftTop = {firstPos.x() + first->widthInLocal(), firstPos.y() + first->heightInLocal() / 2};
+			rightBottom = {secondPos.x(), secondPos.y() + second->heightInLocal() / 2};
+			lineFrom_ = {0, 0};
+			lineTo_ = rightBottom - leftTop;
+		}
+		else
+		{
+			// first is at bottom left
+			leftTop = {firstPos.x() + first->widthInLocal(), secondPos.y() + second->heightInLocal() / 2};
+			rightBottom = {secondPos.x(), firstPos.y() + first->heightInLocal() / 2};
+			lineFrom_ = {0, rightBottom.y() - leftTop.y()};
+			lineTo_ = {rightBottom.x() - leftTop.x(), 0};
+		}
 	}
-	lineFrom_ = QPoint(first->scenePos().x() + first->widthInLocal() - leftTopCorner.x(),
-					   first->scenePos().y() + first->heightInLocal() / 2 - leftTopCorner.y());
-	lineTo_ = QPoint(second->scenePos().x() - leftTopCorner.x(),
-					 second->scenePos().y() + second->heightInLocal() / 2 - leftTopCorner.y());
+	else
+	{
+		if (secondPos.y() < firstPos.y())
+		{
+			// second is at top left -> first is at bottom right
+			leftTop = {secondPos.x() + second->widthInLocal(), secondPos.y() + second->heightInLocal() / 2};
+			rightBottom = {firstPos.x(), firstPos.y() + first->heightInLocal() / 2};
+			lineFrom_ = rightBottom - leftTop;
+			lineTo_ = {0, 0};
+		}
+		else
+		{
+			// second is at bottom left -> first is at top right
+			leftTop = {secondPos.x() + second->widthInLocal(), firstPos.y() + first->heightInLocal() / 2};
+			rightBottom = {firstPos.x(), secondPos.y() + second->heightInLocal() / 2};
+			lineFrom_ = {rightBottom.x() - leftTop.x(), 0};
+			lineTo_ = {0, rightBottom.y() - leftTop.y()};
+		}
+	}
+
+	setPos(leftTop);
+	setSize(rightBottom.x() - leftTop.x(), rightBottom.y() - leftTop.y());
 }
 
 }

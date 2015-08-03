@@ -48,9 +48,8 @@ class VISUALIZATIONBASE_API ArrowOverlay: public Super<Overlay<Item>>
 		virtual void updateGeometry(int availableWidth, int availableHeight) override;
 
 	private:
-		QPoint lineFrom_{};
-		QPoint lineTo_{};
-		bool invertArrow_{};
+		QPointF lineFrom_{};
+		QPointF lineTo_{};
 };
 
 }
