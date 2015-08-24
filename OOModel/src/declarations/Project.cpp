@@ -84,4 +84,17 @@ void Project::buildSymbolTable()
 	Super::buildSymbolTable();
 }
 
+Model::Node* Project::findSymbol(QString name)
+{
+	//qDebug() << "searching" << name;
+	//qDebug() << st_;
+
+	if (auto node = st_[name])
+	{
+		//qDebug() << "found" << name;
+		return node;
+	}
+	return Super::findSymbol(name);
+}
+
 }

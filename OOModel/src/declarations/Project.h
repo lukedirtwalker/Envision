@@ -57,6 +57,8 @@ class OOMODEL_API Project : public Super<Declaration>
 
 		virtual void buildSymbolTable() override;
 
+		virtual Model::Node* findSymbol(QString name) override;
+
 	protected:
 		virtual const SymbolTable* symbolTable() const override { return &st_; }
 

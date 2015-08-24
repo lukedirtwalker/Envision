@@ -75,4 +75,13 @@ void Module::buildSymbolTable()
 	Super::buildSymbolTable();
 }
 
+Model::Node* Module::findSymbol(QString name)
+{
+	if (auto node = st_[name])
+	{
+		return node;
+	}
+	return Super::findSymbol(name);
+}
+
 }

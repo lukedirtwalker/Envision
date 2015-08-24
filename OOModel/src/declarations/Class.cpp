@@ -273,14 +273,11 @@ QSet<Class*> Class::directSubClasses()
 
 Model::Node* Class::findSymbol(QString name)
 {
-	qDebug() << "searching" << name;
-
 	if (auto node = st_[name])
 	{
-		qDebug() << "found" << name;
 		return node;
 	}
-	return Node::findSymbol(name);
+	return Super::findSymbol(name);
 }
 
 }
