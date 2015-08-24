@@ -173,6 +173,8 @@ void Class::buildSymbolTable()
 
 	for (auto e : *fields())
 		st_[e->name()] = e;
+
+	Super::buildSymbolTable();
 }
 
 Expression* Class::defaultImplicitBaseFromProject() const
@@ -267,6 +269,18 @@ QSet<Class*> Class::directSubClasses()
 		toCheck.append(check->children());
 	}
 	return result;
+}
+
+Model::Node* Class::findSymbol(QString name)
+{
+	qDebug() << "searching" << name;
+
+	if (auto node = st_[name])
+	{
+		qDebug() << "found" << name;
+		return node;
+	}
+	return Node::findSymbol(name);
 }
 
 }

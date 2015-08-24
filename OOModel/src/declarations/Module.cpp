@@ -71,6 +71,8 @@ void Module::buildSymbolTable()
 
 	for (auto e : *fields())
 		st_[e->name()] = e;
+
+	Super::buildSymbolTable();
 }
 
 }

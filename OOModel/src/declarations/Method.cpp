@@ -255,12 +255,21 @@ void Method::buildSymbolTable()
 			st_[variableDeclaration->name()] = stmt;
 	}
 
+	qDebug() << st_;
+
+	Super::buildSymbolTable();
 }
 
 Model::Node* Method::findSymbol(QString name)
 {
+	qDebug() << "searching" << name;
+	qDebug() << st_;
+
 	if (auto node = st_[name])
+	{
+		qDebug() << "found" << name;
 		return node;
+	}
 	return Node::findSymbol(name);
 }
 
