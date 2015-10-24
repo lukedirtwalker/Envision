@@ -96,3 +96,5 @@ SOURCES += src/CppImportException.cpp \
     src/macro/EnvisionToClangMap.cpp \
     src/macro/NodeToCloneMap.cpp \
     src/macro/LexicalTransformations.cpp
+
+QMAKE_POST_LINK += $$escape_expand(\\n\\t) cd $$_PRO_FILE_PWD_ && ../tidywrap.py -p=$${ENVISION_ROOT_DIR} $$SOURCES
