@@ -84,6 +84,22 @@ class OOMODEL_API Method : public Super<Declaration>
 
 		QSet<Method*> callees();
 		QSet<Method*> callers();
+
+	private:
+		template<class ReturnType>
+		ReturnType forAllChilren(Model::Node* from, std::function<void (ReturnType&, Model::Node*)> function)
+		{
+			ReturnType result;
+			QList<Model::Node*> toCheck;
+			toCheck.append(from);
+			while (!toCheck.isEmpty())
+			{
+				auto current = toCheck.takeLast();
+				function(result, current);
+				toCheck.append(current->children());
+			}
+			return result;
+		}
 };
 
 inline Method::MethodKind Method::methodKind() const { return static_cast<MethodKind> (mthKind()); }

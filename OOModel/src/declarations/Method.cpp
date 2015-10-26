@@ -189,18 +189,25 @@ bool Method::overrides(Method* other)
 
 QSet<Method*> Method::callees()
 {
-	QSet<Method*> result;
-	QList<Model::Node*> toCheck;
-	toCheck.append(this);
-	while (!toCheck.isEmpty())
+	return forAllChilren<QSet<Method*>>(this, [](QSet<Method*>& result, Model::Node* current)
 	{
-		auto current = toCheck.takeLast();
 		if (auto call = DCast<MethodCallExpression>(current))
 			if (call->methodDefinition())
 				result << call->methodDefinition();
-		toCheck.append(current->children());
-	}
-	return result;
+	});
+
+//	QSet<Method*> result;
+//	QList<Model::Node*> toCheck;
+//	toCheck.append(this);
+//	while (!toCheck.isEmpty())
+//	{
+//		auto current = toCheck.takeLast();
+//		if (auto call = DCast<MethodCallExpression>(current))
+//			if (call->methodDefinition())
+//				result << call->methodDefinition();
+//		toCheck.append(current->children());
+//	}
+//	return result;
 }
 
 QSet<Method*> Method::callers()
