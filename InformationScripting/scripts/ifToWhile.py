@@ -1,3 +1,4 @@
+#example: ifToWhile
 
 if type(target) is IfStatement:
     parent = target.parent
