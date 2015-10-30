@@ -81,6 +81,9 @@ QList<Optional<TupleSet> > ScriptQuery::execute(QList<TupleSet> input)
 
 		python::object sys = python::import("sys");
 
+		// Add the scripts folder to the path:
+		sys.attr("path").attr("append")(qApp->applicationDirPath() + QDir::separator() + "scripts");
+
 		main_namespace["inputs"] = input;
 		main_namespace["target"] = python::ptr(target());
 		main_namespace["args"] = arguments_;
