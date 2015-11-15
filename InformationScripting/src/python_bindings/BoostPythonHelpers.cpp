@@ -31,6 +31,8 @@
 #include "../dataformat/Tuple.h"
 #include "../dataformat/TupleSet.h"
 
+#include "ModelBase/src/nodes/Node.h"
+
 namespace InformationScripting {
 
 namespace PythonConverters {
@@ -166,6 +168,7 @@ void BoostPythonHelpers::initializeConverters()
 	python::to_python_converter<QList<QString>, PythonConverters::QList_to_python_list<QString>>();
 	python::to_python_converter<QList<TupleSet>, PythonConverters::QList_to_python_list<TupleSet>>();
 	python::to_python_converter<QList<NamedProperty>, PythonConverters::QList_to_python_list<NamedProperty>>();
+	python::to_python_converter<QList<Model::Node*>, PythonConverters::QList_to_python_list<Model::Node*>>();
 
 	// register the from-python converters
 	PythonConverters::QString_from_python_str();
