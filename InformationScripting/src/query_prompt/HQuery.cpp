@@ -51,6 +51,8 @@
 
 namespace InformationScripting {
 
+const QStringList HQuery::PRESENTATION_QUERIES{"methods"};
+
 HQuery* HQuery::instance()
 {
 	static HQuery instance;
@@ -142,6 +144,15 @@ void HQuery::keyPressEvent(Visualization::Item* target, QKeyEvent* event)
 		changed = true;
 		newText.insert(index, event->text());
 		newIndex += event->text().size();
+
+		bool isValue = false;
+		auto trimmedText = newText.trimmed();
+		int presentationIndex = trimmedText.toInt(&isValue) - 1;
+		if (isValue && presentationIndex >= 0 && presentationIndex < PRESENTATION_QUERIES.size())
+		{
+			newText = PRESENTATION_QUERIES[presentationIndex];
+			newIndex = newText.size();
+		}
 	}
 
 	if (changed)

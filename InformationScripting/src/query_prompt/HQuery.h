@@ -60,6 +60,8 @@ class HQuery : public Interaction::GenericHandler {
 		static int removeListsWithOneElement(QString& exp, int& index, int iteratorIndex = -1);
 
 		static bool isOperatorAtIndex(const QString& exp, int index);
+
+		static const QStringList PRESENTATION_QUERIES;
 };
 
 } /* namespace InformationScripting */
