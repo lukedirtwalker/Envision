@@ -62,7 +62,7 @@ PromptShell::PromptShell(const QString& initialCommandText,
 	setDefaultMoveCursorProxy(inputItem_);
 
 	setFlag(QGraphicsItem::ItemIsMovable);
-	setFlag(ItemIgnoresTransformations);
+//	setFlag(ItemIgnoresTransformations);
 	setZValue(LAYER_COMMAND);
 	setItemCategory(Scene::MenuItemCategory);
 
