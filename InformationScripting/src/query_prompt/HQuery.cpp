@@ -51,7 +51,10 @@
 
 namespace InformationScripting {
 
-const QStringList HQuery::PRESENTATION_QUERIES{"methods"};
+const QStringList HQuery::PRESENTATION_QUERIES{"callgraph",
+															 "callgraph|canReach -r calls -self",
+															 "ast -t ExpressionStatement|addBreakpoints|traceExecution|heatmap",
+															 "classes -g|visitorPattern"};
 
 HQuery* HQuery::instance()
 {
