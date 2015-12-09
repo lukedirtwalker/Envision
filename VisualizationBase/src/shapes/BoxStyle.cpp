@@ -94,7 +94,9 @@ void BoxStyle::unoptimizedPaint(QPainter* painter, int xOffset, int yOffset, int
 	if (customColor.isValid())
 	{
 		auto pen = outline();
-		pen.setColor(customColor.darker());
+		auto color = customColor;
+		color.setAlpha(255);
+		pen.setColor(color);
 		painter->setPen(pen);
 	}
 	else
