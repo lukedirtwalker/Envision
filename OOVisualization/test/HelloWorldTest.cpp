@@ -837,11 +837,15 @@ Method* addLongMethod(Class* parent)
 	assignEach->setOp(AssignmentExpression::DIVIDE_ASSIGN);
 	assignEach->setRight(new ReferenceExpression{"elem"});
 
+
+	VariableDeclarationExpression* exceptionToCatch = new VariableDeclarationExpression{"e"};
+	exceptionToCatch->decl()->setTypeExpression(new UnionTypeExpression{});
+
 	auto trycatch = new TryCatchFinallyStatement{};
 	trycatch->tryBody()->append(new ExpressionStatement{new ReferenceExpression{"var1"}});
 	auto catch1 = new CatchClause{};
 	trycatch->catchClauses()->append(catch1);
-	catch1->setExceptionToCatch(new ReferenceExpression{"someExpDecl"});
+	catch1->setExceptionToCatch(exceptionToCatch);
 	catch1->body()->append(new ExpressionStatement{new ReferenceExpression{"var2"}});
 	auto catch2 = new CatchClause{};
 	trycatch->catchClauses()->append(catch2);

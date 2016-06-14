@@ -97,6 +97,7 @@
 #include "expressions/types/AutoTypeExpression.h"
 #include "expressions/types/TypeQualifierExpression.h"
 #include "expressions/types/FunctionTypeExpression.h"
+#include "expressions/types/UnionTypeExpression.h"
 
 #include "elements/Enumerator.h"
 #include "elements/StatementItem.h"

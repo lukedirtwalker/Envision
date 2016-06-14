@@ -36,10 +36,12 @@ add_library(OOModel SHARED
 	src/types/ErrorType.h
 	src/types/ArrayType.h
 	src/types/PrimitiveType.h
+	src/types/UnionType.h
 	src/types/Type.h
 	src/expressions/types/ArrayTypeExpression.h
 	src/expressions/types/ClassTypeExpression.h
 	src/expressions/types/PrimitiveTypeExpression.h
+	src/expressions/types/UnionTypeExpression.h
 	src/expressions/types/TypeExpression.h
 	src/elements/OOReference.h
 	src/expressions/ConditionalExpression.h
@@ -137,10 +139,12 @@ add_library(OOModel SHARED
 	src/types/ErrorType.cpp
 	src/types/ArrayType.cpp
 	src/types/PrimitiveType.cpp
+	src/types/UnionType.cpp
 	src/types/Type.cpp
 	src/expressions/types/ArrayTypeExpression.cpp
 	src/expressions/types/ClassTypeExpression.cpp
 	src/expressions/types/PrimitiveTypeExpression.cpp
+	src/expressions/types/UnionTypeExpression.cpp
 	src/expressions/types/TypeExpression.cpp
 	src/elements/OOReference.cpp
 	src/expressions/ConditionalExpression.cpp
