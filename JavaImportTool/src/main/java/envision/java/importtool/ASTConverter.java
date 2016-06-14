@@ -403,7 +403,7 @@ public class ASTConverter {
     		visitBody(((Block)body).statements(),bodyName);
     	else
     	{
-    		List<Statement> bodyList = new LinkedList<Statement>();
+    		List<Statement> bodyList = new LinkedList<>();
     		bodyList.add(body);
     		visitBody(bodyList, bodyName);
     	}
@@ -1054,11 +1054,11 @@ public class ASTConverter {
 			activeNode.setChild("right", lastOperand);
 		} else if (e instanceof InstanceofExpression)
 		{
-			InstanceofExpression instaceOfExpression = (InstanceofExpression) e;
+			InstanceofExpression instanceOfExpression = (InstanceofExpression) e;
 			node = new Node(null, "InstanceOfExpression", name);
 			
-			node.setChild("expr", expression(instaceOfExpression.getLeftOperand(),"left"));	
-			node.setChild("typeExpression", typeExpression(instaceOfExpression.getRightOperand(),"right"));
+			node.setChild("expr", expression(instanceOfExpression.getLeftOperand(),"left"));
+			node.setChild("typeExpression", typeExpression(instanceOfExpression.getRightOperand(),"right"));
 		}
 		else if (e instanceof MethodInvocation)
 		{
@@ -1072,12 +1072,8 @@ public class ASTConverter {
 				refNode.add(expression(ie.getExpression(), "prefix"));
 			refNode.child("ref").setStringValue("____NULL____:" + ie.getName().getIdentifier());
 			
-			for (Type ta : (List<Type>) ie.typeArguments())
-				refNode.child("typeArguments").add(
-						typeExpression(ta, Integer.toString(refNode.child("typeArguments").numChildren())));
-			
-			for (Expression arg : (List<Expression>) ie.arguments())
-				node.child("arguments").add(expression(arg, Integer.toString(node.child("arguments").numChildren())));
+			addTypeArgumentsTo(refNode, ie.typeArguments());
+			addArgumentsTo(node, ie.arguments());
 		} else if (e instanceof Name)
 		{
 			Node prefix = null;
@@ -1168,12 +1164,8 @@ public class ASTConverter {
 			refNode.add(new Node(null, "SuperExpression", "prefix"));
 			refNode.child("ref").setStringValue("____NULL____:" + ie.getName().getIdentifier());
 			
-			for (Type ta : (List<Type>) ie.typeArguments())
-				refNode.child("typeArguments").add(
-						typeExpression(ta, Integer.toString(refNode.child("typeArguments").numChildren())));
-			
-			for (Expression arg : (List<Expression>) ie.arguments())
-				node.child("arguments").add(expression(arg, Integer.toString(node.child("arguments").numChildren())));
+			addTypeArgumentsTo(refNode, ie.typeArguments());
+			addArgumentsTo(node, ie.arguments());
 		}
 		else if (e instanceof ThisExpression)
 		{
@@ -1216,33 +1208,8 @@ public class ASTConverter {
 			}
 			containers.pop();
 			node.setChild("arguments", dummyMethod.child("arguments"));
-		} else if (e instanceof ExpressionMethodReference) {
-			ExpressionMethodReference methodRef = (ExpressionMethodReference) e;
-			
-			node = new Node(null, "ReferenceExpression", name);
-			Node prefix = expression(methodRef.getExpression(), "prefix");
-			
-			for (Type typeArgument : (List<Type>)methodRef.typeArguments()) {
-				Node typeNode = typeExpression(typeArgument, name);
-				node.child("typeArguments").add(typeNode);
-			}
-			
-			node.add(prefix);
-			node.child("ref").setStringValue("____NULL____:" + methodRef.getName().getIdentifier());
-		} else if (e instanceof CreationReference) {
-			CreationReference creationRef = (CreationReference) e;
-			
-			// TODO: Actually implement this in Envision.
-			node = new Node(null, "ReferenceExpression", name);
-			Node prefix = typeExpression(creationRef.getType(), "prefix");
-			
-			for (Type typeArgument : (List<Type>)creationRef.typeArguments()) {
-				Node typeNode = typeExpression(typeArgument, name);
-				node.child("typeArguments").add(typeNode);
-			}
-			
-			node.add(prefix);
-			node.child("ref").setStringValue("____NULL____:new");
+		} else if (e instanceof MethodReference) {
+			node = methodReference((MethodReference) e, name);
 		} else
 			throw new UnknownFeatureException("Unknown expression type: " + e.getClass().getSimpleName());
 		
@@ -1272,5 +1239,58 @@ public class ASTConverter {
 		}
     	
     	return variableDeclarations;
+	}
+
+	private Node methodReference(MethodReference methodReference, String name) throws ConversionException {
+		Node node = null;
+		if (methodReference instanceof CreationReference) {
+			CreationReference creationRef = (CreationReference) methodReference;
+
+			// TODO: Actually implement this in Envision.
+			node = new Node(null, "ReferenceExpression", name);
+			Node prefix = typeExpression(creationRef.getType(), "prefix");
+
+			addTypeArgumentsTo(node, creationRef.typeArguments(), name);
+
+			node.add(prefix);
+			node.child("ref").setStringValue("____NULL____:new");
+		} else if (methodReference instanceof ExpressionMethodReference) {
+			ExpressionMethodReference methodRef = (ExpressionMethodReference) methodReference;
+
+			node = new Node(null, "ReferenceExpression", name);
+			Node prefix = expression(methodRef.getExpression(), "prefix");
+
+			addTypeArgumentsTo(node, methodRef.typeArguments(), name);
+
+			node.add(prefix);
+			node.child("ref").setStringValue("____NULL____:" + methodRef.getName().getIdentifier());
+		}  else if (methodReference instanceof SuperMethodReference) {
+			// TODO implement
+		} else if (methodReference instanceof  TypeMethodReference) {
+			// TODO implement
+		} else
+			throw new UnknownFeatureException("Unknown MethodReference type: " + methodReference.getClass().getSimpleName());
+		return node;
+	}
+
+	private void addTypeArgumentsTo(Node node, List typeArguments, String name) throws ConversionException {
+		for (Type typeArgument : (List<Type>)typeArguments) {
+			Node typeNode = typeExpression(typeArgument, name);
+			node.child("typeArguments").add(typeNode);
+		}
+	}
+
+	private void addTypeArgumentsTo(Node refNode, List typeArguments) throws ConversionException {
+		for (Type ta : (List<Type>) typeArguments) {
+			Node typeNode = typeExpression(ta, Integer.toString(refNode.child("typeArguments").numChildren()));
+			refNode.child("typeArguments").add(typeNode);
+		}
+	}
+
+	private void addArgumentsTo(Node node, List arguments) throws ConversionException {
+		for (Expression arg : (List<Expression>) arguments) {
+			Node expressionNode = expression(arg, Integer.toString(node.child("arguments").numChildren()));
+			node.child("arguments").add(expressionNode);
+		}
 	}
 }
